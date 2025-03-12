@@ -1,3 +1,9 @@
+import csv
+import datetime
+accounts = []
+current_user = {}
+
+
 class Account:
     len_account = 0
 
@@ -59,7 +65,8 @@ class Account:
         global current_user
         current_user = None
         return current_user
-    
+
+
 class Withdraw(Account):
     rows = []
 
@@ -163,6 +170,7 @@ class Withdraw(Account):
 
         return f"Withdrawal successful. New balance: {current_user['balance_savings']}"
 
+
 class Deposit(Account):
     rows = []
 
@@ -255,3 +263,170 @@ class Deposit(Account):
         return f"Deposit successful. New balance: {current_user['balance_savings']}"
 
 
+#
+class Transfer(Account):
+    rows = []
+
+    def __init__(self, account):
+        global accounts
+        with open('transactions.csv', mode='r', newline='') as read_file:
+            reader = csv.DictReader(read_file)
+            for row in reader:
+                self.rows.append(row)
+
+    def transfer_to_saving(self, amount):
+        global accounts
+        overdraft = False
+        withdraw = Withdraw(account=current_user)
+        deposit = Deposit(account=current_user)
+        withdraw.withdraw_money(amount)
+        deposit.deposit_in_saving(amount)
+
+        list_of_do = {
+            "account_id": current_user['account_id'], "amount": amount, "type": 'transfer_to_saving',
+            "overdraft": overdraft}
+
+        with open('transactions.csv', 'a', newline='') as csvfile:
+            fieldnames = ["account_id", "amount", "type", "overdraft"]
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            # writer.writeheader()
+            writer.writerow(list_of_do)
+        list_of_values = {
+            "account_id": current_user['account_id'], "first_name": current_user['first_name'],
+            "last_name": current_user['last_name'],
+            "password": current_user['password'], "balance_checking": float(current_user['balance_checking']),
+            "balance_savings": float(current_user['balance_savings']), "active": current_user['active']}
+
+        with open('bank.csv', 'w', newline='') as csvfile:
+            fieldnames = ["account_id", "first_name", "last_name", "password", "balance_checking", "balance_savings",
+                          "active"]
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerow(list_of_values)
+            print(list_of_values)
+        return True
+
+    def transfer_to_checking(self, amount):
+        global accounts
+        overdraft = False
+        withdraw = Withdraw(account=current_user)
+        deposit = Deposit(account=current_user)
+        withdraw.withdraw_from_savings(amount)
+        deposit.deposit_money(amount)
+
+        list_of_do = {
+            "account_id": current_user['account_id'], "amount": amount, "type": 'transfer_to_saving',
+            "overdraft": overdraft}
+
+        with open('transactions.csv', 'a', newline='') as csvfile:
+            fieldnames = ["account_id", "amount", "type", "overdraft"]
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            # writer.writeheader()
+            writer.writerow(list_of_do)
+        list_of_values = {
+            "account_id": current_user['account_id'], "first_name": current_user['first_name'],
+            "last_name": current_user['last_name'],
+            "password": current_user['password'], "balance_checking": float(current_user['balance_checking']),
+            "balance_savings": float(current_user['balance_savings']), "active": current_user['active']}
+
+        with open('bank.csv', 'w', newline='') as csvfile:
+            fieldnames = ["account_id", "first_name", "last_name", "password", "balance_checking", "balance_savings",
+                          "active"]
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerow(list_of_values)
+            print(list_of_values)
+        return True
+
+    def transfer_to_another_account(self, amount, account_id):
+        global accounts
+        ather_account = {}
+        overdraft = False
+        # withdraw = Withdraw(account=current_user)
+        # withdraw.withdraw_money(amount)
+        if amount > 0:
+            current_user["balance_checking"] = float(current_user['balance_checking']) - amount
+        if account_id:
+            for account in accounts:
+                if account['account_id'] == account_id:
+                    ather_account = account
+            if amount > 0:
+                ather_account["balance_checking"] = float(ather_account['balance_checking']) + amount
+        else:
+            return "there is no account"
+
+        list_of_do = [{
+            "account_id": current_user['account_id'], "amount": amount, "type": 'transfer',
+            "overdraft": overdraft,"Date_time":datetime.datetime.now()}, {
+            "account_id": ather_account['account_id'], "amount": amount, "type": 'balance_checking',
+            "overdraft": overdraft}]
+
+        with open('transactions.csv', 'a', newline='') as csvfile:
+            fieldnames = ["account_id", "amount", "type", "overdraft"]
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            # writer.writeheader()
+            writer.writerows(list_of_do)
+            for account in accounts:
+                if account["account_id"] == current_user['account_id']:
+                    account["balance_checking"] = float(current_user['balance_checking'])
+
+        with open('bank.csv', 'w', newline='') as csvfile:
+            fieldnames = ["account_id", "first_name", "last_name", "password", "balance_checking", "balance_savings",
+                          "active"]
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+
+            writer.writerows(accounts)
+            # print(list_of_values)
+        return True
+
+
+crete_or_login = int(input("Enter 1 for log in or 2 for crete an account :"))
+if crete_or_login == 1:
+
+    customer_id = input("Enter your id:")
+    customer_password = input("Enter your password:")
+
+    if customer_id and customer_password:
+        user = Account()
+        if user.login(user_name=customer_id, password_user=customer_password):
+            operation = int(input("Enter 1 for withdrawal or 2 for deposit or 3 for Transfer 4 log out :"))
+            if operation == 1:
+
+                withdrawal = int(input("Enter 1 for checking account or 2 for saving account :"))
+
+                if withdrawal == 1:
+                    after_login = Withdraw(account=current_user)
+                    amount = float(input("how mach do you want:"))
+                    after_login.withdraw_money(amount=amount)
+                if withdrawal == 2:
+                    after_login = Withdraw(account=current_user)
+                    amount = float(input("how mach do you want:"))
+                    after_login.withdraw_from_savings(amount=amount)
+
+            if operation == 2:
+
+                deposit = int(input("Enter 1 for checking account or 2 for saving account :"))
+
+                if deposit == 1:
+                    after_login = Deposit(account=current_user)
+                    amount = float(input("how mach do you want:"))
+                    after_login.deposit_money(amount=amount)
+
+                if deposit == 2:
+                    after_login = Deposit(account=current_user)
+                    amount = float(input("how mach do you want:"))
+                    after_login.deposit_in_saving(amount=amount)
+
+            if operation == 3:
+                after_login = Transfer(account=current_user)
+                amount = float(input("how mach do you want:"))
+                acount_id = input("Enter the id:")
+                after_login.transfer_to_another_account(amount=amount, account_id=acount_id)
+            if operation == 4:
+                user.logout()
+
+if crete_or_login == 2:
+    user1 = Account()
+    user1.user_input()
+    user1.create()
