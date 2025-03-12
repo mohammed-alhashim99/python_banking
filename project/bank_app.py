@@ -16,7 +16,7 @@ class Account:
         self.balance_checking = balance_checking
         self.balance_savings = balance_savings
         self.active = active
-        with open('bank.csv', mode='r', newline='') as read_file:
+        with open("bank.csv", mode='r', newline='') as read_file:
             reader = csv.DictReader(read_file)
             for row in reader:
                 accounts.append(row)
@@ -34,7 +34,7 @@ class Account:
             "password": self.password, "balance_checking": float(self.balance_checking),
             "balance_savings": float(self.balance_savings), "active": self.active}
 
-        with open('bank.csv', 'a', newline='') as csvfile:
+        with open('./bank.csv', 'a', newline='') as csvfile:
             fieldnames = ["account_id", "first_name", "last_name", "password", "balance_checking", "balance_savings",
                           "active"]
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -70,7 +70,7 @@ class Withdraw(Account):
     def __init__(self, account):
         global accounts
         print('accounts: ', accounts)
-        with open('transactions.csv', mode='r', newline='') as read_file:
+        with open('./transactions.csv', mode='r', newline='') as read_file:
             reader = csv.DictReader(read_file)
             for row in reader:
                 self.rows.append(row)
@@ -83,7 +83,7 @@ class Withdraw(Account):
 
     def overdraft(self):
         global current_user
-        with open('transactions.csv', mode='r', newline='') as read_file:
+        with open('./transactions.csv', mode='r', newline='') as read_file:
             reader = csv.DictReader(read_file)
             rows = []
             for row in reader:
@@ -120,7 +120,7 @@ class Withdraw(Account):
             "account_id": current_user['account_id'], "amount": amount, "type": 'balance_checking',
             "overdraft": overdraft}
         # print(f"the list: {list_of_do}")
-        with open('transactions.csv', 'a', newline='') as csvfile:
+        with open('./transactions.csv', 'a', newline='') as csvfile:
             fieldnames = ["account_id", "amount", "type", "overdraft"]
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             # writer.writeheader()
@@ -164,7 +164,7 @@ class Withdraw(Account):
             "account_id": current_user['account_id'], "amount": amount, "type": 'balance_savings',
             "overdraft": overdraft}
         # print(f"the list: {list_of_do}")
-        with open('transactions.csv', 'a', newline='') as csvfile:
+        with open('./transactions.csv', 'a', newline='') as csvfile:
             fieldnames = ["account_id", "amount", "type", "overdraft"]
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             # writer.writeheader()
@@ -176,7 +176,7 @@ class Withdraw(Account):
             "password": current_user['password'], "balance_checking": float(current_user['balance_checking']),
             "balance_savings": float(current_user['balance_savings']), "active": current_user['active']}
 
-        with open('bank.csv', 'w', newline='') as csvfile:
+        with open('./bank.csv', 'w', newline='') as csvfile:
             fieldnames = ["account_id", "first_name", "last_name", "password", "balance_checking", "balance_savings",
                           "active"]
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
