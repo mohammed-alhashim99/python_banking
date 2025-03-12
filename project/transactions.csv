@@ -1,0 +1,5 @@
+account_id, amount, type,overdraft
+1001,200.0,balance_checking,False
+1001,200.0,balance_savings,False
+1001,200.0,balance_checking,False
+1001,250.0,balance_checking,False
