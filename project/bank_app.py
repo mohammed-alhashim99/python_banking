@@ -76,13 +76,13 @@ class Account:
                 if row['account_id'] == current_user['account_id']:
                     print(row)
 
-    def transaction_one_detail(self):
+    def transaction_one_detail(self,type):
         global current_user
         global accounts
         with open("transactions.csv", mode="r", encoding="utf-8") as file:
             reader = csv.DictReader(file)
             for row in reader:
-                if row['account_id'] == current_user['account_id'] and row['type'] == current_user[""]:
+                if row['account_id'] == current_user['account_id'] and row['type'] == type:
                     print(row)
 
 
@@ -130,9 +130,9 @@ class Withdraw(Account):
 
         list_of_do = {
             "account_id": current_user['account_id'], "amount": amount, "type": 'Withdraw_from_checking',
-            "overdraft": overdraft}
+            "overdraft": overdraft, "Date": datetime.datetime.now()}
         with open('transactions.csv', 'a', newline='') as csvfile:
-            fieldnames = ["account_id", "amount", "type", "overdraft"]
+            fieldnames = ["account_id", "amount", "type", "overdraft", "Date"]
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             # writer.writeheader()
             writer.writerow(list_of_do)
@@ -171,10 +171,10 @@ class Withdraw(Account):
 
         list_of_do = {
             "account_id": current_user['account_id'], "amount": amount, "type": 'Withdraw_from_savings',
-            "overdraft": overdraft}
+            "overdraft": overdraft, "Date":datetime.datetime.now()}
 
         with open('transactions.csv', 'a', newline='') as csvfile:
-            fieldnames = ["account_id", "amount", "type", "overdraft"]
+            fieldnames = ["account_id", "amount", "type", "overdraft","Date"]
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             # writer.writeheader()
             writer.writerow(list_of_do)
@@ -226,9 +226,9 @@ class Deposit(Account):
 
         list_of_do = {
             "account_id": current_user['account_id'], "amount": amount, "type": 'deposit_in_checking',
-            "overdraft": overdraft}
+            "overdraft": overdraft,"Date":datetime.datetime.now()}
         with open('transactions.csv', 'a', newline='') as csvfile:
-            fieldnames = ["account_id", "amount", "type", "overdraft"]
+            fieldnames = ["account_id", "amount", "type", "overdraft","Date"]
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             # writer.writeheader()
             writer.writerow(list_of_do)
@@ -256,9 +256,9 @@ class Deposit(Account):
                 current_user['active'] = True
         list_of_do = {
             "account_id": current_user['account_id'], "amount": amount, "type": 'deposit_in_savings',
-            "overdraft": overdraft}
+            "overdraft": overdraft,"Date":datetime.datetime.now()}
         with open('transactions.csv', 'a', newline='') as csvfile:
-            fieldnames = ["account_id", "amount", "type", "overdraft"]
+            fieldnames = ["account_id", "amount", "type", "overdraft","Date"]
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             # writer.writeheader()
             writer.writerow(list_of_do)
@@ -297,7 +297,7 @@ class Transfer(Account):
 
         list_of_do = {
             "account_id": current_user['account_id'], "amount": amount, "type": 'transfer_to_saving',
-            "overdraft": overdraft}
+            "overdraft": overdraft,"Date":datetime.datetime.now()}
 
         with open('transactions.csv', 'a', newline='') as csvfile:
             fieldnames = ["account_id", "amount", "type", "overdraft"]
@@ -326,10 +326,10 @@ class Transfer(Account):
 
         list_of_do = {
             "account_id": current_user['account_id'], "amount": amount, "type": 'transfer_to_saving',
-            "overdraft": overdraft}
+            "overdraft": overdraft,"Date":datetime.datetime.now()}
 
         with open('transactions.csv', 'a', newline='') as csvfile:
-            fieldnames = ["account_id", "amount", "type", "overdraft"]
+            fieldnames = ["account_id", "amount", "type", "overdraft","Date"]
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             # writer.writeheader()
             writer.writerow(list_of_do)
@@ -364,12 +364,12 @@ class Transfer(Account):
 
         list_of_do = [{
             "account_id": current_user['account_id'], "amount": amount, "type": 'transfer_to_another_account',
-            "overdraft": overdraft}, {
+            "overdraft": overdraft,"Date":datetime.datetime.now()}, {
             "account_id": ather_account['account_id'], "amount": amount, "type": 'balance_checking',
-            "overdraft": overdraft}]
+            "overdraft": overdraft,"Date":datetime.datetime.now()}]
 
         with open('transactions.csv', 'a', newline='') as csvfile:
-            fieldnames = ["account_id", "amount", "type", "overdraft"]
+            fieldnames = ["account_id", "amount", "type", "overdraft","Date"]
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             # writer.writeheader()
             writer.writerows(list_of_do)
