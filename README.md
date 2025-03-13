@@ -19,9 +19,9 @@ Welcome to the **Python Banking System**! This is a command-line banking applica
 -----------------------------------------
 
 ## 🛠️ Technologies Used
-✨ **Python** -- 💖💖💖💖
-✨ **CSV File Storage** -- 📖📖📖📖
-✨ **`termcolor` & `simple_term_menu`** -- 🎨🎨🎨🎨
+✨ **Python** -- 💖💖💖💖<br/>
+✨ **CSV File Storage** -- 📖📖📖📖<br/>
+✨ **`termcolor` & `simple_term_menu`** -- 🎨🎨🎨🎨<br/>
 
 -----------------------------------------
 
