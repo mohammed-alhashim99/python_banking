@@ -26,11 +26,11 @@ Welcome to the **Python Banking System**! This is a command-line banking applica
 -----------------------------------------
 
 ## 🧊 Icebox Features (Cool Future Ideas!)
-🎯 **Interest Calculation** 
-🔐 **Extra security for user accounts**  
-📱 **Mobile-Friendly UI** 
-📊 **Spending Insights & Budgeting**   
-✈️ **Allow users to apply for and repay loans** 
+🎯 **Interest Calculation** <br/>
+🔐 **Extra security for user accounts** <br/>
+📱 **Mobile-Friendly UI** <br/>
+📊 **Spending Insights & Budgeting**<br/>
+✈️ **Allow users to apply for and repay loans** <br/>
 
 -------------------------
 
