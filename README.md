@@ -19,18 +19,18 @@ Welcome to the **Python Banking System**! This is a command-line banking applica
 -----------------------------------------
 
 ## 🛠️ Technologies Used
-✨ **Python** - The heart of the application 💖  
-✨ **CSV File Storage** - A simple way to store user data  
-✨ **`termcolor` & `simple_term_menu`** - Making the CLI experience engaging! 🎨  
+✨ **Python** -- 💖💖💖💖
+✨ **CSV File Storage** -- 📖📖📖📖
+✨ **`termcolor` & `simple_term_menu`** -- 🎨🎨🎨🎨
 
 -----------------------------------------
 
 ## 🧊 Icebox Features (Cool Future Ideas!)
-🎯 **Interest Calculation** - Automate interest accrual on savings accounts.  
-🔐 **Multi-Factor Authentication (MFA)** - Extra security for user accounts.  
-📱 **Mobile-Friendly UI** - Upgrade from CLI to a sleek mobile/web interface.  
-📊 **Spending Insights & Budgeting** - Help users manage finances smarter.  
-✈️ **Loan Management** - Allow users to apply for and repay loans.  
+🎯 **Interest Calculation** 
+🔐 **Extra security for user accounts**  
+📱 **Mobile-Friendly UI** 
+📊 **Spending Insights & Budgeting**   
+✈️ **Allow users to apply for and repay loans** 
 
 -------------------------
 
