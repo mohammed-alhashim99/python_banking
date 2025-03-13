@@ -1,5 +1,8 @@
 import csv
 import datetime
+from simple_term_menu import TerminalMenu
+import sys
+from termcolor import colored, cprint
 
 accounts = []
 current_user = {}
@@ -314,7 +317,7 @@ class Transfer(Account):
             writer.writeheader()
 
             writer.writerows(accounts)
-        return True
+        return f"Transfer successful from balance_checking. New balance: {current_user['balance_savings']}"
 
     def transfer_to_checking(self, amount):
         global accounts
@@ -343,7 +346,7 @@ class Transfer(Account):
             writer.writeheader()
 
             writer.writerows(accounts)
-        return True
+        return f"Transfer successful form balance_savings. New balance: {current_user['balance_checking']}"
 
     def transfer_to_another_account(self, amount, account_id):
         global accounts
@@ -383,69 +386,121 @@ class Transfer(Account):
             writer.writeheader()
             writer.writerows(accounts)
             # print(list_of_values)
-        return True
+        return f"Transfer successful. New balance: {current_user['balance_checking']}"
 
+w = colored("Welcome! Select an option:", "red")
+def main_menu():
 
-crete_or_login = int(input("Enter 1 for log in or 2 for crete an account :"))
-if crete_or_login == 1:
+    options = ["Log in", "Create an Account", "Exit"]
+    menu = TerminalMenu(options, title=w)
 
-    customer_id = input("Enter your id:")
-    customer_password = input("Enter your password:")
+    while True:
+        choice = menu.show()
+        if choice == 0:
+            login_menu()
+        elif choice == 1:
+            create_account_menu()
+        elif choice == 2:
+            print("Exiting...")
+            break
+
+# Log in Menu
+def login_menu():
+    customer_id = input("Enter your id: ")
+    customer_password = input("Enter your password: ")
 
     if customer_id and customer_password:
         user = Account()
         if user.login(user_name=customer_id, password_user=customer_password):
-            operation = int(
-                input("Enter 1 for withdrawal or 2 for deposit or 3 for Transfer 4 log out  5 get transactions:"))
-            if operation == 1:
+            operation_menu(user)
 
-                withdrawal = int(input("Enter 1 for checking account or 2 for saving account :"))
-
-                if withdrawal == 1:
-                    after_login = Withdraw(account=current_user)
-                    amount = float(input("how mach do you want:"))
-                    after_login.withdraw_money(amount=amount)
-                if withdrawal == 2:
-                    after_login = Withdraw(account=current_user)
-                    amount = float(input("how mach do you want:"))
-                    after_login.withdraw_from_savings(amount=amount)
-
-            if operation == 2:
-
-                deposit = int(input("Enter 1 for checking account or 2 for saving account :"))
-
-                if deposit == 1:
-                    after_login = Deposit(account=current_user)
-                    amount = float(input("how mach do you want:"))
-                    after_login.deposit_money(amount=amount)
-
-                if deposit == 2:
-                    after_login = Deposit(account=current_user)
-                    amount = float(input("how mach do you want:"))
-                    after_login.deposit_in_saving(amount=amount)
-
-            if operation == 3:
-                after_login = Transfer(account=current_user)
-                amount = float(input("how mach do you want:"))
-                account_id = input("Enter the id:")
-                after_login.transfer_to_another_account(amount=amount, account_id=account_id)
-
-            if operation == 4:
-                user.logout()
-
-            if operation == 5:
-
-                operation_transaction = int(input("Enter 1 for all transactions or 2 for specific transaction :"))
-
-                if operation_transaction == 1:
-                    user.transaction_detail()
-
-                if operation_transaction == 2:
-                    type_transaction = input("Enter your type of transaction:")
-                    print(type(type_transaction))
-                    user.transaction_one_detail(type_transaction)
-
-if crete_or_login == 2:
+# Create Account Menu
+def create_account_menu():
     user1 = Account()
     user1.user_input()
     user1.create()
+
+# Operation Menu after Login
+def operation_menu(user):
+    operations = ["Withdraw", "Deposit", "Transfer", "Log out", "Get Transactions"]
+    menu = TerminalMenu(operations, title="Select an operation:")
+
+    while True:
+        operation_choice = menu.show()
+        
+        if operation_choice == 0:  # Withdrawal
+            withdrawal_menu(user)
+        elif operation_choice == 1:  # Deposit
+            deposit_menu(user)
+        elif operation_choice == 2:  # Transfer
+            transfer_menu(user)
+        elif operation_choice == 3:  # Log out
+            user.logout()
+            break
+        elif operation_choice == 4:  # Get Transactions
+            get_transactions_menu(user)
+
+# Withdrawal Menu
+def withdrawal_menu(user):
+    withdrawal_options = ["Checking Account", "Saving Account", "Back"]
+    menu = TerminalMenu(withdrawal_options, title="Select account type:")
+
+    choice = menu.show()
+    if choice == 0:  # Checking Account
+        amount = float(input("How much do you want to withdraw? "))
+        after_login = Withdraw(account=current_user)
+        print(after_login.withdraw_money(amount=amount))
+    elif choice == 1:  # Saving Account
+        amount = float(input("How much do you want to withdraw? "))
+        after_login = Withdraw(account=current_user)
+        print(after_login.withdraw_from_savings(amount=amount))
+
+# Deposit Menu
+def deposit_menu(user):
+    deposit_options = ["Checking Account", "Saving Account", "Back"]
+    menu = TerminalMenu(deposit_options, title="Select account type:")
+
+    choice = menu.show()
+    if choice == 0:  # Checking Account
+        amount = float(input("How much do you want to deposit? "))
+        after_login = Deposit(account=current_user)
+        print(after_login.deposit_money(amount=amount))
+    elif choice == 1:  # Saving Account
+        amount = float(input("How much do you want to deposit? "))
+        after_login = Deposit(account=current_user)
+        print(after_login.deposit_in_saving(amount=amount))
+
+# Transfer Menu
+def transfer_menu(user):
+    withdrawal_options = ["transfer to another account", "transfer to checking","transfer to saving", "Back"]
+    menu = TerminalMenu(withdrawal_options, title="Select account type:")
+    choice = menu.show()
+    if choice == 0: #transfer_to_another_account
+        after_login = Transfer(account=current_user)
+        amount = float(input("How much do you want to transfer? "))
+        account_id = input("Enter the account id to transfer to: ")
+        print(after_login.transfer_to_another_account(amount=amount, account_id=account_id))
+    elif choice == 1: #transfer_to_checking
+        after_login = Transfer(account=current_user)
+        amount = float(input("How much do you want to transfer? "))
+        print(after_login.transfer_to_checking(amount=amount))
+    elif choice == 2: #transfer_to_saving
+        after_login = Transfer(account=current_user)
+        amount = float(input("How much do you want to transfer? "))
+        print(after_login.transfer_to_saving(amount=amount))
+
+
+# Get Transactions Menu
+def get_transactions_menu(user):
+    transaction_options = ["All Transactions", "Specific Transaction", "Back"]
+    menu = TerminalMenu(transaction_options, title="Select transaction type:")
+
+    choice = menu.show()
+    if choice == 0:  # All Transactions
+        user.transaction_detail()
+    elif choice == 1:  # Specific Transaction
+        type_transaction = input("Enter your transaction type: ")
+        user.transaction_one_detail(type_transaction)
+
+if __name__ == "__main__":
+    main_menu()

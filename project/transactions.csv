@@ -3,3 +3,9 @@ account_id, amount, type,overdraft
 1001,200.0,balance_savings,False
 1001,200.0,balance_checking,False
 1001,250.0,balance_checking,False
+1001,36.0,Withdraw_from_checking,False,2025-03-13 12:33:10.317517
+1001,20.0,Withdraw_from_checking,False,2025-03-13 12:34:19.589305
+1001,20.0,deposit_in_checking,True,2025-03-13 12:41:23.611702
+1001,200.0,transfer_to_another_account,False,2025-03-13 12:49:37.148608
+1002,200.0,balance_checking,False,2025-03-13 12:49:37.149250
+1001,20.0,Withdraw_from_checking,False,2025-03-13 12:58:56.920925
