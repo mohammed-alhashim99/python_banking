@@ -45,6 +45,7 @@ class Account:
             writer.writerow(list_of_values)
         return list_of_values
 
+    #The naming is weird, I have no clue what this is supposed to do by the name
     def user_input(self):
         list_of_input = ["first_name", "last_name", "password", "balance_checking", "balance_savings"]
         account = self.__dict__
@@ -97,6 +98,7 @@ class Withdraw(Account):
         with open('transactions.csv', mode='r', newline='') as read_file:
             reader = csv.DictReader(read_file)
             for row in reader:
+                #self.rows is not a great description of what you are putting there, accounts would probably make more sense
                 self.rows.append(row)
 
     def overdraft(self):
@@ -114,12 +116,20 @@ class Withdraw(Account):
     def withdraw_money(self, amount):
         global accounts
         overdraft = False
+        #if this is only available after you log in, it's kind of overkill to have a second login validator, a user should not
+        #be able to access this without being logged in first, in the case of your application
         if not self.login(current_user['account_id'], current_user['password']):
             return "Please log in first"
+        # if not current user active, just return, this way there's less indentation, and its easier to read
+        # if not current_user['active']:
+        #     return
         if current_user['active'] == "True":
             if amount > 0:
                 if amount > 100:
+                    #You probably want either to do elifs or to return out of this function, 
+                    #there is logic here which is mutually exlusive, and all of which could run
                     print("You can only withdraw 100$")
+                #It may have been good to do an elif, since both of these could happen at the same time
                 if amount > 100 and float(current_user["balance_checking"]) < 0:
                     print("Customer cannot withdraw more than $100 if account balance is negative")
                 current_user["balance_checking"] = float(current_user['balance_checking']) - amount
@@ -134,6 +144,8 @@ class Withdraw(Account):
         list_of_do = {
             "account_id": current_user['account_id'], "amount": amount, "type": 'Withdraw_from_checking',
             "overdraft": overdraft, "Date": datetime.datetime.now()}
+        #This could have been a "save CSV function, which could have been used in many places and saved you code
+        #there is a principle called DRY (Do not reapeat yourself) which is a good buzz word in job interviews.
         with open('transactions.csv', 'a', newline='') as csvfile:
             fieldnames = ["account_id", "amount", "type", "overdraft", "Date"]
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -152,7 +164,8 @@ class Withdraw(Account):
             writer.writerows(accounts)
 
         return f"Withdrawal successful. New balance: {current_user['balance_checking']}"
-
+    #You probably could have dynamically removed money, or added money to bank accounts with having one function for withdraw
+    #and one function for deposit, but just giving them an account, or account type parameter
     def withdraw_from_savings(self, amount):
         global accounts
         overdraft = True
@@ -219,6 +232,7 @@ class Deposit(Account):
     def deposit_money(self, amount):
         global accounts
         overdraft = True
+        #See note in withdraw
         if not self.login(current_user['account_id'], current_user['password']):
             return "Please log in first"
         if amount > 0:
@@ -289,7 +303,7 @@ class Transfer(Account):
             reader = csv.DictReader(read_file)
             for row in reader:
                 self.rows.append(row)
-
+    #Same idea here, you can just an account, and user parameter, and pull from the user.accounts dyanmically
     def transfer_to_saving(self, amount):
         global accounts
         overdraft = False
@@ -404,7 +418,6 @@ def main_menu():
             print("Exiting...")
             break
 
-# Log in Menu
 def login_menu():
     customer_id = input("Enter your id: ")
     customer_password = input("Enter your password: ")
@@ -414,13 +427,12 @@ def login_menu():
         if user.login(user_name=customer_id, password_user=customer_password):
             operation_menu(user)
 
-# Create Account Menu
+
 def create_account_menu():
     user1 = Account()
     user1.user_input()
     user1.create()
 
-# Operation Menu after Login
 def operation_menu(user):
     operations = ["Withdraw", "Deposit", "Transfer", "Log out", "Get Transactions"]
     menu = TerminalMenu(operations, title="Select an operation:")
@@ -428,77 +440,74 @@ def operation_menu(user):
     while True:
         operation_choice = menu.show()
         
-        if operation_choice == 0:  # Withdrawal
+        if operation_choice == 0:  
             withdrawal_menu(user)
-        elif operation_choice == 1:  # Deposit
+        elif operation_choice == 1:  
             deposit_menu(user)
-        elif operation_choice == 2:  # Transfer
+        elif operation_choice == 2:  
             transfer_menu(user)
-        elif operation_choice == 3:  # Log out
+        elif operation_choice == 3:  
             user.logout()
             break
-        elif operation_choice == 4:  # Get Transactions
+        elif operation_choice == 4:  
             get_transactions_menu(user)
 
-# Withdrawal Menu
 def withdrawal_menu(user):
     withdrawal_options = ["Checking Account", "Saving Account", "Back"]
     menu = TerminalMenu(withdrawal_options, title="Select account type:")
 
     choice = menu.show()
-    if choice == 0:  # Checking Account
+    if choice == 0:
         amount = float(input("How much do you want to withdraw? "))
         after_login = Withdraw(account=current_user)
         print(after_login.withdraw_money(amount=amount))
-    elif choice == 1:  # Saving Account
+    elif choice == 1:
         amount = float(input("How much do you want to withdraw? "))
         after_login = Withdraw(account=current_user)
         print(after_login.withdraw_from_savings(amount=amount))
 
-# Deposit Menu
 def deposit_menu(user):
     deposit_options = ["Checking Account", "Saving Account", "Back"]
     menu = TerminalMenu(deposit_options, title="Select account type:")
 
     choice = menu.show()
-    if choice == 0:  # Checking Account
+    if choice == 0:
         amount = float(input("How much do you want to deposit? "))
         after_login = Deposit(account=current_user)
         print(after_login.deposit_money(amount=amount))
-    elif choice == 1:  # Saving Account
+    elif choice == 1: 
         amount = float(input("How much do you want to deposit? "))
         after_login = Deposit(account=current_user)
         print(after_login.deposit_in_saving(amount=amount))
 
-# Transfer Menu
+
 def transfer_menu(user):
     withdrawal_options = ["transfer to another account", "transfer to checking","transfer to saving", "Back"]
     menu = TerminalMenu(withdrawal_options, title="Select account type:")
     choice = menu.show()
-    if choice == 0: #transfer_to_another_account
+    if choice == 0:
         after_login = Transfer(account=current_user)
         amount = float(input("How much do you want to transfer? "))
         account_id = input("Enter the account id to transfer to: ")
         print(after_login.transfer_to_another_account(amount=amount, account_id=account_id))
-    elif choice == 1: #transfer_to_checking
+    elif choice == 1: 
         after_login = Transfer(account=current_user)
         amount = float(input("How much do you want to transfer? "))
         print(after_login.transfer_to_checking(amount=amount))
-    elif choice == 2: #transfer_to_saving
+    elif choice == 2:
         after_login = Transfer(account=current_user)
         amount = float(input("How much do you want to transfer? "))
         print(after_login.transfer_to_saving(amount=amount))
 
 
-# Get Transactions Menu
 def get_transactions_menu(user):
     transaction_options = ["All Transactions", "Specific Transaction", "Back"]
     menu = TerminalMenu(transaction_options, title="Select transaction type:")
 
     choice = menu.show()
-    if choice == 0:  # All Transactions
+    if choice == 0: 
         user.transaction_detail()
-    elif choice == 1:  # Specific Transaction
+    elif choice == 1: 
         type_transaction = input("Enter your transaction type: ")
         user.transaction_one_detail(type_transaction)
 
